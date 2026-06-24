@@ -36,56 +36,78 @@ export function SortPopover({ value, onChange }: SortPopoverProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-8">
-          <ArrowUpDown className="size-4" />
+        <Button variant="outline" size="icon" className="size-10 rounded-xl">
+          <ArrowUpDown className="size-5" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64" align="end">
-        <div className="space-y-4">
-          <div>
-            <Label className="text-xs font-medium text-muted-foreground">
+      <PopoverContent className="w-72 p-4" align="end">
+        <div className="space-y-5">
+          <fieldset>
+            <legend className="mb-2 text-sm font-semibold text-foreground">
               Sort by
-            </Label>
-            <div className="mt-2 flex flex-col gap-1">
+            </legend>
+            <div className="flex flex-col gap-1.5">
               {fields.map((f) => (
-                <button
+                <label
                   key={f.value}
-                  type="button"
-                  className={`flex items-center rounded-md px-2 py-1.5 text-sm transition-colors ${
+                  className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                     value.field === f.value
                       ? "bg-muted font-medium"
                       : "hover:bg-muted/50"
                   }`}
-                  onClick={() => onChange({ ...value, field: f.value })}
                 >
+                  <input
+                    type="radio"
+                    name="sort-field"
+                    className="size-4 accent-foreground"
+                    checked={value.field === f.value}
+                    onChange={() => onChange({ ...value, field: f.value })}
+                  />
                   {f.label}
-                </button>
+                </label>
               ))}
             </div>
-          </div>
-          <div>
-            <Label className="text-xs font-medium text-muted-foreground">
+          </fieldset>
+
+          <fieldset>
+            <legend className="mb-2 text-sm font-semibold text-foreground">
               Direction
-            </Label>
-            <div className="mt-2 flex gap-2">
-              <Button
-                variant={value.direction === "asc" ? "default" : "outline"}
-                size="sm"
-                className="flex-1"
-                onClick={() => onChange({ ...value, direction: "asc" })}
+            </legend>
+            <div className="flex flex-col gap-1.5">
+              <label
+                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  value.direction === "asc"
+                    ? "bg-muted font-medium"
+                    : "hover:bg-muted/50"
+                }`}
               >
+                <input
+                  type="radio"
+                  name="sort-direction"
+                  className="size-4 accent-foreground"
+                  checked={value.direction === "asc"}
+                  onChange={() => onChange({ ...value, direction: "asc" })}
+                />
                 ↑ Ascending
-              </Button>
-              <Button
-                variant={value.direction === "desc" ? "default" : "outline"}
-                size="sm"
-                className="flex-1"
-                onClick={() => onChange({ ...value, direction: "desc" })}
+              </label>
+              <label
+                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  value.direction === "desc"
+                    ? "bg-muted font-medium"
+                    : "hover:bg-muted/50"
+                }`}
               >
+                <input
+                  type="radio"
+                  name="sort-direction"
+                  className="size-4 accent-foreground"
+                  checked={value.direction === "desc"}
+                  onChange={() => onChange({ ...value, direction: "desc" })}
+                />
                 ↓ Descending
-              </Button>
+              </label>
             </div>
-          </div>
+          </fieldset>
         </div>
       </PopoverContent>
     </Popover>

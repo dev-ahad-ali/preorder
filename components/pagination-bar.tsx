@@ -21,24 +21,26 @@ export function PaginationBar({
   const endItem = Math.min(currentPage * pageSize, totalItems);
 
   return (
-    <div className="flex items-center justify-between rounded-b-lg bg-muted/50 px-4 py-3">
+    <div className="flex items-center justify-between rounded-b-xl bg-muted/50 px-5 py-4">
       <Button
-        variant="ghost"
-        size="icon"
+        variant="outline"
+        size="default"
         disabled={currentPage <= 1}
         onClick={() => onPageChange(currentPage - 1)}
       >
         <ChevronLeft className="size-4" />
+        <span>Previous</span>
       </Button>
       <span className="text-sm text-muted-foreground">
         Showing {startItem} to {endItem} of {totalItems}
       </span>
       <Button
-        variant="ghost"
-        size="icon"
+        variant="outline"
+        size="default"
         disabled={currentPage >= totalPages}
         onClick={() => onPageChange(currentPage + 1)}
       >
+        <span>Next</span>
         <ChevronRight className="size-4" />
       </Button>
     </div>
