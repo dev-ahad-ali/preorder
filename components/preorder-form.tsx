@@ -127,7 +127,7 @@ export function PreorderForm({ preorder }: { preorder?: Preorder }) {
                 </div>
             </div>
 
-            <div className="rounded-xl border bg-card shadow-sm">
+            <div className="rounded-lg border bg-card shadow-sm">
                 <div className="px-8 py-8">
                     <div className="mb-8">
                         <h2 className="text-2xl font-semibold">Preorder details</h2>
@@ -174,7 +174,7 @@ export function PreorderForm({ preorder }: { preorder?: Preorder }) {
                                 >
                                     −
                                 </Button>
-                                <span className="flex h-11 w-20 items-center justify-center rounded-lg border text-lg">
+                                <span className="flex h-11 w-20 items-center justify-center rounded-md border text-lg">
                                     {products}
                                 </span>
                                 <Button

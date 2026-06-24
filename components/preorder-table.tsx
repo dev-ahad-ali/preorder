@@ -131,15 +131,15 @@ export function PreorderTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <div className="rounded-lg border bg-card shadow-sm">
 
-      <div className="rounded-xl border bg-card shadow-sm">
         <div className="flex items-center justify-between border-b px-5 py-4">
-          <div className="flex items-center gap-1.5 rounded-xl bg-muted p-1">
+          <div className="flex items-center gap-1.5 rounded-lg bg-muted p-1">
             {["all", "active", "inactive"].map((f) => (
               <button
                 key={f}
                 type="button"
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                   statusFilter === f
                     ? "bg-background text-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground"

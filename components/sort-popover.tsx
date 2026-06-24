@@ -35,7 +35,7 @@ export function SortPopover({ value, onChange }: SortPopoverProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="size-10 rounded-xl">
+        <Button variant="outline" size="icon" className="size-10 rounded-lg">
           <ArrowUpDown className="size-5" />
         </Button>
       </PopoverTrigger>
@@ -49,7 +49,7 @@ export function SortPopover({ value, onChange }: SortPopoverProps) {
               {fields.map((f) => (
                 <label
                   key={f.value}
-                  className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  className={`flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
                     value.field === f.value
                       ? "bg-muted font-medium"
                       : "hover:bg-muted/50"

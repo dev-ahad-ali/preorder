@@ -49,7 +49,7 @@ export default async function HomePage({ searchParams }: PageProps) {
     <div className="flex min-h-screen flex-col bg-zinc-50">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8">
         <h1 className="text-3xl font-bold tracking-tight">Preorders</h1>
-        <Button asChild className="rounded-xl px-6 py-5 text-base">
+        <Button asChild className="rounded-lg px-6 py-5 text-base">
           <a href="/new">Create Preorder</a>
         </Button>
       </header>
