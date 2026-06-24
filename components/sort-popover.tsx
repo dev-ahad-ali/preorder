@@ -8,7 +8,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Label } from "@/components/ui/label";
 
 export type SortField = "name" | "createdAt" | "startsAt" | "endsAt";
 export type SortDirection = "asc" | "desc";
@@ -74,38 +73,22 @@ export function SortPopover({ value, onChange }: SortPopoverProps) {
               Direction
             </legend>
             <div className="flex flex-col gap-1.5">
-              <label
-                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                  value.direction === "asc"
-                    ? "bg-muted font-medium"
-                    : "hover:bg-muted/50"
-                }`}
+              <Button
+                variant={value.direction === "asc" ? "default" : "outline"}
+                size="default"
+                className="w-full justify-start"
+                onClick={() => onChange({ ...value, direction: "asc" })}
               >
-                <input
-                  type="radio"
-                  name="sort-direction"
-                  className="size-4 accent-foreground"
-                  checked={value.direction === "asc"}
-                  onChange={() => onChange({ ...value, direction: "asc" })}
-                />
                 ↑ Ascending
-              </label>
-              <label
-                className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                  value.direction === "desc"
-                    ? "bg-muted font-medium"
-                    : "hover:bg-muted/50"
-                }`}
+              </Button>
+              <Button
+                variant={value.direction === "desc" ? "default" : "outline"}
+                size="default"
+                className="w-full justify-start"
+                onClick={() => onChange({ ...value, direction: "desc" })}
               >
-                <input
-                  type="radio"
-                  name="sort-direction"
-                  className="size-4 accent-foreground"
-                  checked={value.direction === "desc"}
-                  onChange={() => onChange({ ...value, direction: "desc" })}
-                />
                 ↓ Descending
-              </label>
+              </Button>
             </div>
           </fieldset>
         </div>

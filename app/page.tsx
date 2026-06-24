@@ -47,13 +47,13 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50">
-      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-8">
+      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8">
         <h1 className="text-3xl font-bold tracking-tight">Preorders</h1>
         <Button asChild className="rounded-xl px-6 py-5 text-base">
           <a href="/new">Create Preorder</a>
         </Button>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6 pb-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-8">
         <PreorderTable
           preorders={serialized as unknown as Parameters<typeof PreorderTable>[0]["preorders"]}
           total={total}
