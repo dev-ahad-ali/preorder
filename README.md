@@ -15,8 +15,14 @@ A full-stack Next.js 16 application for managing preorders, built with Prisma (S
 # Install dependencies
 pnpm install
 
+# Generate the Prisma client
+pnpm prisma generate
+
 # Push the Prisma schema to create the SQLite database
 pnpm prisma db push
+
+# Install tsx if you don't have already
+pnpm add -D tsx
 
 # Seed the database with sample data
 pnpm prisma db seed
