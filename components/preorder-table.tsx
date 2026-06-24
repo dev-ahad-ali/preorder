@@ -4,9 +4,20 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 import { togglePreorderStatus, deletePreorder } from "@/lib/actions";
 import { SortPopover, type SortField, type SortDirection } from "./sort-popover";
 import { PaginationBar } from "./pagination-bar";
@@ -45,6 +56,7 @@ export function PreorderTable({
   const searchParams = useSearchParams();
   const [selectedIds, setSelectedIds] = React.useState<Set<number>>(new Set());
   const [pendingDeletes, setPendingDeletes] = React.useState<Set<number>>(new Set());
+  const [deleteTarget, setDeleteTarget] = React.useState<Preorder | null>(null);
 
   const allSelected = preorders.length > 0 && preorders.every((p) => selectedIds.has(p.id));
 
@@ -74,11 +86,14 @@ export function PreorderTable({
 
   async function handleToggleStatus(id: number) {
     await togglePreorderStatus(id);
+    toast.success("Status updated");
   }
 
   async function handleDelete(id: number) {
     setPendingDeletes((prev) => new Set(prev).add(id));
+    setDeleteTarget(null);
     await deletePreorder(id);
+    toast.success("Preorder deleted");
   }
 
   function handleSortChange(option: { field: SortField; direction: SortDirection }) {
@@ -94,125 +109,149 @@ export function PreorderTable({
   }
 
   return (
-    <div className="rounded-xl border bg-card shadow-sm">
-      <div className="flex items-center justify-between border-b px-5 py-4">
-        <div className="flex items-center gap-1.5 rounded-xl bg-muted p-1">
-          {["all", "active", "inactive"].map((f) => (
-            <button
-              key={f}
-              type="button"
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                statusFilter === f
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              onClick={() => handleFilterChange(f)}
+    <>
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete preorder</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteTarget && handleDelete(deleteTarget.id)}
             >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
-        <SortPopover
-          value={{ field: sortField, direction: sortDirection }}
-          onChange={handleSortChange}
-        />
-      </div>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b text-left text-sm font-medium text-muted-foreground">
-              <th className="px-5 py-4 w-12">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={toggleAll}
-                  aria-label="Select all"
-                />
-              </th>
-              <th className="px-5 py-4">Name</th>
-              <th className="px-5 py-4">Products</th>
-              <th className="px-5 py-4">Preorder when</th>
-              <th className="px-5 py-4">Starts at</th>
-              <th className="px-5 py-4">Ends at</th>
-              <th className="px-5 py-4">Status</th>
-              <th className="px-5 py-4 w-24">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {preorders.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-5 py-16 text-center text-sm text-muted-foreground">
-                  No preorders found
-                </td>
+      <div className="rounded-xl border bg-card shadow-sm">
+        <div className="flex items-center justify-between border-b px-5 py-4">
+          <div className="flex items-center gap-1.5 rounded-xl bg-muted p-1">
+            {["all", "active", "inactive"].map((f) => (
+              <button
+                key={f}
+                type="button"
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  statusFilter === f
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                onClick={() => handleFilterChange(f)}
+              >
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+          <SortPopover
+            value={{ field: sortField, direction: sortDirection }}
+            onChange={handleSortChange}
+          />
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b text-left text-sm font-medium text-muted-foreground">
+                <th className="px-5 py-4 w-12">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={toggleAll}
+                    aria-label="Select all"
+                  />
+                </th>
+                <th className="px-5 py-4">Name</th>
+                <th className="px-5 py-4">Products</th>
+                <th className="px-5 py-4">Preorder when</th>
+                <th className="px-5 py-4">Starts at</th>
+                <th className="px-5 py-4">Ends at</th>
+                <th className="px-5 py-4">Status</th>
+                <th className="px-5 py-4 w-24">Actions</th>
               </tr>
-            ) : (
-              preorders.map((preorder) => (
-                <tr
-                  key={preorder.id}
-                  className={`border-b last:border-b-0 transition-colors ${
-                    pendingDeletes.has(preorder.id) ? "opacity-40" : "hover:bg-muted/30"
-                  }`}
-                >
-                  <td className="px-5 py-4">
-                    <Checkbox
-                      checked={selectedIds.has(preorder.id)}
-                      onCheckedChange={() => toggleOne(preorder.id)}
-                      aria-label={`Select ${preorder.name}`}
-                    />
-                  </td>
-                  <td className="px-5 py-4 text-base font-medium">{preorder.name}</td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground">{preorder.products}</td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground capitalize">
-                    {preorder.preorderWhen.replace(/-/g, " ")}
-                  </td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground">
-                    {format(new Date(preorder.startsAt), "MMM d, yyyy")}
-                  </td>
-                  <td className="px-5 py-4 text-sm text-muted-foreground">
-                    {preorder.endsAt
-                      ? format(new Date(preorder.endsAt), "MMM d, yyyy")
-                      : "—"}
-                  </td>
-                  <td className="px-5 py-4">
-                    <Switch
-                      checked={preorder.status}
-                      onCheckedChange={() => handleToggleStatus(preorder.id)}
-                      aria-label={`Toggle status for ${preorder.name}`}
-                    />
-                  </td>
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        asChild
-                      >
-                        <a href={`/${preorder.id}/edit`}>
-                          <Pencil className="size-4" />
-                        </a>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleDelete(preorder.id)}
-                      >
-                        <Trash2 className="size-4 text-destructive" />
-                      </Button>
-                    </div>
+            </thead>
+            <tbody>
+              {preorders.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-5 py-16 text-center text-sm text-muted-foreground">
+                    No preorders found
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                preorders.map((preorder) => (
+                  <tr
+                    key={preorder.id}
+                    className={`border-b last:border-b-0 transition-colors ${
+                      pendingDeletes.has(preorder.id) ? "opacity-40" : "hover:bg-muted/30"
+                    }`}
+                  >
+                    <td className="px-5 py-4">
+                      <Checkbox
+                        checked={selectedIds.has(preorder.id)}
+                        onCheckedChange={() => toggleOne(preorder.id)}
+                        aria-label={`Select ${preorder.name}`}
+                      />
+                    </td>
+                    <td className="px-5 py-4 text-base font-medium">{preorder.name}</td>
+                    <td className="px-5 py-4 text-sm text-muted-foreground">{preorder.products}</td>
+                    <td className="px-5 py-4 text-sm text-muted-foreground capitalize">
+                      {preorder.preorderWhen.replace(/-/g, " ")}
+                    </td>
+                    <td className="px-5 py-4 text-sm text-muted-foreground">
+                      {format(new Date(preorder.startsAt), "MMM d, yyyy")}
+                    </td>
+                    <td className="px-5 py-4 text-sm text-muted-foreground">
+                      {preorder.endsAt
+                        ? format(new Date(preorder.endsAt), "MMM d, yyyy")
+                        : "—"}
+                    </td>
+                    <td className="px-5 py-4">
+                      <Switch
+                        checked={preorder.status}
+                        onCheckedChange={() => handleToggleStatus(preorder.id)}
+                        aria-label={`Toggle status for ${preorder.name}`}
+                      />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          asChild
+                        >
+                          <a href={`/${preorder.id}/edit`}>
+                            <Pencil className="size-4" />
+                          </a>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setDeleteTarget(preorder)}
+                        >
+                          <Trash2 className="size-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      <PaginationBar
-        currentPage={currentPage}
-        totalItems={total}
-        pageSize={pageSize}
-        onPageChange={handlePageChange}
-      />
-    </div>
+        <PaginationBar
+          currentPage={currentPage}
+          totalItems={total}
+          pageSize={pageSize}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </>
   );
 }

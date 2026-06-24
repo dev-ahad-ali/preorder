@@ -30,7 +30,7 @@ export async function createPreorder(formData: FormData) {
   const status = formData.get("status") === "true";
 
   if (!name || !startsAt) {
-    throw new Error("Name and startsAt are required");
+    return { error: "Name and startsAt are required" };
   }
 
   await prisma.preorder.create({
@@ -45,7 +45,7 @@ export async function createPreorder(formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect("/");
+  return { success: true };
 }
 
 export async function updatePreorder(id: number, formData: FormData) {
@@ -57,7 +57,7 @@ export async function updatePreorder(id: number, formData: FormData) {
   const status = formData.get("status") === "true";
 
   if (!name || !startsAt) {
-    throw new Error("Name and startsAt are required");
+    return { error: "Name and startsAt are required" };
   }
 
   await prisma.preorder.update({
@@ -73,5 +73,5 @@ export async function updatePreorder(id: number, formData: FormData) {
   });
 
   revalidatePath("/");
-  redirect("/");
+  return { success: true };
 }

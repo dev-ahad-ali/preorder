@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,11 +61,26 @@ export function PreorderForm({ preorder }: { preorder?: Preorder }) {
 
         try {
             if (preorder) {
-                await updatePreorder(preorder.id, formData);
+                const result = await updatePreorder(preorder.id, formData);
+                if (result?.error) {
+                    toast.error(result.error);
+                    setPending(false);
+                    return;
+                }
+                toast.success("Preorder updated");
+                router.push("/");
             } else {
-                await createPreorder(formData);
+                const result = await createPreorder(formData);
+                if (result?.error) {
+                    toast.error(result.error);
+                    setPending(false);
+                    return;
+                }
+                toast.success("Preorder created");
+                router.push("/");
             }
         } catch {
+            toast.error("Something went wrong");
             setPending(false);
         }
     }
@@ -105,7 +121,7 @@ export function PreorderForm({ preorder }: { preorder?: Preorder }) {
                                 Saving...
                             </span>
                         ) : (
-                            "Save changes"
+                            preorder ? "Save changes" : "Create preorder"
                         )}
                     </Button>
                 </div>
@@ -267,7 +283,7 @@ export function PreorderForm({ preorder }: { preorder?: Preorder }) {
                                 Saving...
                             </span>
                         ) : (
-                            "Save changes"
+                            preorder ? "Save changes" : "Create preorder"
                         )}
                     </Button>
                 </div>
