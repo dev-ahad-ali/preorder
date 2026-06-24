@@ -18,7 +18,7 @@ pnpm install
 # Push the Prisma schema to create the SQLite database
 pnpm prisma db push
 
-# Seed the database with sample data (8 preorders)
+# Seed the database with sample data
 pnpm prisma db seed
 
 # Start the development server
@@ -62,8 +62,8 @@ pnpm dev
 
 ## Routes
 
-| Route | Description |
-|-------|-------------|
-| `/` | Preorder list |
-| `/new` | Create preorder |
-| `/[id]/edit` | Edit preorder |
+| Route        | Description     |
+| ------------ | --------------- |
+| `/`          | Preorder list   |
+| `/new`       | Create preorder |
+| `/[id]/edit` | Edit preorder   |
